@@ -243,11 +243,25 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  const clearCart = () => {
+  const clearCart = async () => {
     dispatch({ type: CLEAR_CART });
     setOrderPlaced(false);
     setOrderId(null);
-  };
+
+  try {
+    const response = await cartService.clearCart(user.id);
+    console.log('Cart cleared:', response.data);
+  } catch (error) {
+    console.error('Error fetching cart:', error);
+  }
+};
+
+  const clearCartFront = async () => {
+    dispatch({ type: CLEAR_CART });
+    setOrderPlaced(false);
+    setOrderId(null);
+};
+
   
   // Process checkout and create order
   const checkout = async (checkoutData) => {
@@ -332,6 +346,7 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         updateQuantity,
         clearCart,
+        clearCartFront,
         checkout
       }}
     >

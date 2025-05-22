@@ -16,6 +16,7 @@ const AccountPage = () => {
   const logout = auth?.logout;
   const navigate = useNavigate();
   const { clearCart } = useCart();
+  const { clearCartFront } = useCart();
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
@@ -47,9 +48,8 @@ const AccountPage = () => {
   const saveCartToBackend = async () => {
     let cart = JSON.parse(localStorage.getItem('cart'));
     cart.user_id = user.id
-    console.log(cart);
-    if (!cart || !cart.items || cart.items.length === 0) return;
-    clearCart();
+    if (!cart || !cart.items || cart.items.length === 0) 
+      return;
     try {
       const response = await cartService.insertCart(cart);
       if (response.data && response.data.cart_id) {
@@ -100,6 +100,7 @@ const AccountPage = () => {
               </li>
               <li className="logout" onClick={async () => {
                   await saveCartToBackend(); 
+                  clearCartFront();
                   logout();
                   navigate('/login');
                 }}>
