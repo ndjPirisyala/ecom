@@ -14,7 +14,7 @@ app = FastAPI()
 # CORS setup
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Or use "*" temporarily for testing
+    allow_origins=["http://localhost:3000"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -88,6 +88,9 @@ async def checkout_cart(order: Order = Body(...)):
 @app.get("/transactions/{user_id}")
 async def get_transactions(user_id: str):
     transactions = await order_collection.find({"user_id": user_id}).to_list(length = 100)
+    for tx in transactions:
+        tx["_id"] = str(tx["_id"])
+        del tx["_id"]
     if not transactions:
         return {"message": "No orders found", "transactions": None}
     return transactions

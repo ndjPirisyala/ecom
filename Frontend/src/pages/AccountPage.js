@@ -19,12 +19,29 @@ const AccountPage = () => {
   const { clearCartFront } = useCart();
   const [orders, setOrders] = useState([]);
 
+  const transformOrders = (backendOrders) => {
+  return backendOrders.map((order, index) => ({
+    id: order.order_id || `ORD-${index + 1}`,
+    date: new Date(order.created_at).toLocaleDateString(), 
+    total: order.total_amount,
+    status: 'Delivered', 
+    items: order.product_cart.map((item, idx) => ({
+      id: item.product_id || idx + 1,
+      name: `Product #${item.product_id}`, 
+      price: item.price,
+      quantity: item.quantity
+    }))
+  }));
+  };
+
   useEffect(() => {
   const fetchTransactions = async () => {
     try {
       const response = await cartService.getTransactions(user.id);
+      console.log(response.data);
       if (response.data) {
-        setOrders(response.data);
+        const transformed = transformOrders(response.data);
+        setOrders(transformed);
       }
     } catch (error) {
       console.error('Failed to fetch transactions:', error);
